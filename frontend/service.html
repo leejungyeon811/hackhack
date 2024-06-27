@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAVE, YOU service page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        #uploaded-image {
+            margin-top: 20px;
+            max-width: 500px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload and Process Image</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" id="image-input" name="image" accept="image/*" required>
+        <button type="submit">Upload</button>
+    </form>
+    <img id="uploaded-image" src="" alt="Processed Image">
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData();
+            const imageInput = document.getElementById('image-input');
+            formData.append('image', imageInput.files[0]);
+
+            const response = await fetch('/process_image/', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                document.getElementById('uploaded-image').src = url;
+            } else {
+                alert('Image upload failed!');
+            }
+        });
+    </script>
+</body>
+</html>
