@@ -17,9 +17,12 @@ def service_page(request):
 def main_page(request):
     return render(request, 'myapp/main.html')
 
+def info_page(request):
+    return render(request, 'myapp/more_info.html')
+
 def building(image):
     logger.info("Building function started")
-    model = YOLO("../runs/detect/train/weights/best.pt")
+    model = YOLO("../runs/best.pt")
     results = model(image)
     detections = results[0].boxes.data.cpu().numpy()
     mask = np.zeros(image.shape[:2], dtype=np.uint8)
@@ -41,8 +44,24 @@ def text(image):
     return image
 
 def sign(image):
-    logger.info("Sign function started and completed")
-    return image
+
+    logger.info("sign function started")
+    model = YOLO("../runs/best_sign.pt")
+    results = model(image)
+    detections = results[0].boxes.data.cpu().numpy()
+    mask = np.zeros(image.shape[:2], dtype=np.uint8)
+
+    for *box, conf, cls in detections:
+        if cls == 0:  # class 0은 building
+            x1, y1, x2, y2 = map(int, box)
+            mask[y1:y2, x1:x2] = 255
+        elif cls == 1:  # class 1은 sign
+            x1, y1, x2, y2 = map(int, box)
+            mask[y1:y2, x1:x2] = 255
+
+    inpainted_img = cv2.inpaint(image, mask, inpaintRadius=3, flags=cv2.INPAINT_TELEA)
+    logger.info("sign function completed")
+    return inpainted_img
 
 @require_POST
 @csrf_exempt
@@ -63,9 +82,11 @@ def process_image(request):
             if process_building:
                 logger.info("Building processing started")
                 img = building(img)
+
             if process_sign:
                 logger.info("Sign processing started")
                 img = sign(img)
+
             if process_text:
                 logger.info("Text processing started")
                 img = text(img)

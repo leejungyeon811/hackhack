@@ -5,29 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SAVE, YOU service page</title>
     <link href="../../static/css/service.css" rel="stylesheet">
-    <style>
-        .file-input-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: 2px dashed #ccc;
-            padding: 20px;
-            width: 300px;
-            height: 300px;
-        }
-
-        .file-input-container img {
-            max-width: 100%;
-            max-height: 100%;
-            display: none;
-        }
-    </style>
 </head>
 <body>
     <div class="main-back">
-        <div class="div-center">
+        <div class="div-center container">
             <h1>SAVE, YOU</h1>
             <p>from personal information infringement</p>
 
@@ -39,24 +20,30 @@
                 <input type="checkbox" id="check_btn3">
                 <label for="check_btn3">건물</label>
             </div>
+
             <form id="upload-form" enctype="multipart/form-data">
-                <div class="file-input-container" onclick="document.getElementById('image-input').click();">
-                    <span>Upload Here!</span>
-                    <input type="file" id="image-input" name="image" accept="image/*" class="file-input" style="display: none;" required>
-                    <img id="preview-image" alt="Image Preview">
+                <div class="image-boxes">
+                    <div class="file-input-container" onclick="document.getElementById('image-input').click();">
+                        <span id="upload-message">Click To Upload Image</span>
+                        <input type="file" id="image-input" name="image" accept="image/*" class="file-input" style="display: none;" required>
+                        <img id="preview-image" alt="Image Preview">
+                    </div>
+
+                    <div class="result-container">
+                        <span id="processed-message">Processed Image</span>
+                        <img id="uploaded-image" src="" alt="Processed Image">
+                    </div>
                 </div>
-                <button type="submit">Upload</button>
+                <div class="upload-button-container">
+                    <button type="submit" class="upload-button">Upload</button>
+                </div>
             </form>
 
-            <div id="result-container">
-                <img id="uploaded-image" src="" alt="Processed Image">
-            </div>
             <div id="error-message" style="color: red;"></div>
         </div>
     </div>
 
     <script>
-        console.log('started');
         document.getElementById('image-input').addEventListener('change', function(event) {
             var input = event.target;
             var reader = new FileReader();
@@ -66,6 +53,7 @@
                 var previewImage = document.getElementById('preview-image');
                 previewImage.src = dataURL;
                 previewImage.style.display = 'block';
+                document.getElementById('upload-message').style.display = 'none';
             };
             reader.readAsDataURL(input.files[0]);
         });
@@ -84,7 +72,6 @@
             formData.append('check_btn1', checkBtn1);
             formData.append('check_btn2', checkBtn2);
             formData.append('check_btn3', checkBtn3);
-            console.log('started2');
 
             fetch('/process_image/', {
                 method: 'POST',
@@ -96,6 +83,7 @@
                 var uploadedImage = document.getElementById('uploaded-image');
                 uploadedImage.src = url;
                 uploadedImage.style.display = 'block';
+                document.getElementById('processed-message').style.display = 'none';
                 document.getElementById('error-message').textContent = '';
             })
             .catch(error => {
