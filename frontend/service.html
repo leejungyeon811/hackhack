@@ -6,20 +6,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SAVE, YOU service page</title>
     <link href="css/service.css" rel="stylesheet">
+    <style>
+        
+    </style>
 </head>
 
 <body>
     <div class="main-back">
         <div class="div-center">
-            <h1>Upload and Process Image</h1>
+            <h1>SAVE, YOU</h1>
+            <p>from personal information infringement</p>
+
+            <div class="check_wrap">
+                <input type="checkbox" id="check_btn1" checked="true">
+                <label for="check_btn1">개인정보</label>
+                <input type="checkbox" id="check_btn2">
+                <label for="check_btn2">건물</label>
+                <input type="checkbox" id="check_btn3">
+                <label for="check_btn3">주소</label>
+            </div>
             <form id="upload-form" enctype="multipart/form-data">
-                <input type="file" id="image-input" name="image" accept="image/*" required>
-                <button type="submit">Upload</button>
+                <div class="file-input-container" onclick="document.getElementById('image-input').click();">
+                    <span>Upload Here!</span>
+                    <input type="file" id="image-input" name="image" accept="image/*" class="file-input" required>
+                </div>
             </form>
+
             <img id="uploaded-image" src="" alt="Processed Image">
+
             <script>
-                document.getElementById('upload-form').addEventListener('submit', async (event) => {
-                    event.preventDefault();
+                document.getElementById('image-input').addEventListener('change', async () => {
                     const formData = new FormData();
                     const imageInput = document.getElementById('image-input');
                     formData.append('image', imageInput.files[0]);
@@ -38,10 +54,9 @@
                     }
                 });
             </script>
+            
         </div>
-
     </div>
-
 </body>
 
 </html>
