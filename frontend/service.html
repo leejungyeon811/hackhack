@@ -7,7 +7,7 @@
     <title>SAVE, YOU service page</title>
     <link href="css/service.css" rel="stylesheet">
     <style>
-        
+
     </style>
 </head>
 
@@ -40,6 +40,12 @@
                     const imageInput = document.getElementById('image-input');
                     formData.append('image', imageInput.files[0]);
 
+                    // 체크박스 상태 확인
+                    const checkboxes = document.querySelectorAll('.check_wrap input[type="checkbox"]');
+                    checkboxes.forEach(checkbox => {
+                        formData.append(checkbox.id, checkbox.checked);
+                    });
+
                     const response = await fetch('/process_image/', {
                         method: 'POST',
                         body: formData
@@ -54,7 +60,7 @@
                     }
                 });
             </script>
-            
+
         </div>
     </div>
 </body>
