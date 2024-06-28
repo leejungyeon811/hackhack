@@ -6,8 +6,17 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from ultralytics import YOLO
 import logging
+import os
+import pytesseract
+from pytesseract import Output
 
-# 로깅 설정
+
+def set_path():
+
+    pytesseract.pytesseract.tesseract_cmd = r"C:/Program Files/Tesseract-OCR/tesseract.exe"
+    os.environ['TESSDATA_PREFIX'] = r'C:/Program Files/Tesseract-OCR/tessdata'
+    return 0
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -22,7 +31,7 @@ def info_page(request):
 
 def building(image):
     logger.info("Building function started")
-    model = YOLO("../runs/best.pt")
+    model = YOLO("../core/static/runs/best.pt")
     results = model(image)
     detections = results[0].boxes.data.cpu().numpy()
     mask = np.zeros(image.shape[:2], dtype=np.uint8)
@@ -40,13 +49,31 @@ def building(image):
     return inpainted_img
 
 def text(image):
-    logger.info("Text function started and completed")
+    set_path()
+    detection = pytesseract.image_to_data(image, config="--psm 11 --oem 3", output_type=Output.DICT)
+
+    n_boxes = len(detection['level'])
+
+    for i in range(n_boxes):
+        if detection['text'][i].isdigit():
+            (x, y, w, h) = (detection['left'][i], detection['top'][i], detection['width'][i], detection['height'][i])
+
+            surrounding_color = (
+                    int(np.mean(image[y-10:y+h+10, x-10:x+10, 0])),
+                    int(np.mean(image[y-10:y+h+10, x-10:x+10, 1])),
+                    int(np.mean(image[y-10:y+h+10, x-10:x+10, 2]))
+                )
+            cv2.rectangle(image, (x, y), (x + w, y + h), surrounding_color, -1)
+
     return image
+
+
+
 
 def sign(image):
 
     logger.info("sign function started")
-    model = YOLO("../runs/best_sign.pt")
+    model = YOLO("../core/static/runs/best_sign.pt")
     results = model(image)
     detections = results[0].boxes.data.cpu().numpy()
     mask = np.zeros(image.shape[:2], dtype=np.uint8)
