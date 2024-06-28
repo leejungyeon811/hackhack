@@ -69,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'image_p.wsgi.application'
+
 
 
 # Database
