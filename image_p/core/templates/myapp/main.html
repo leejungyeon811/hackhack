@@ -11,8 +11,9 @@
     <div class="main-back">
         <div class="logo"></div>
         <div class="btn_group">
-            <button type="button" id="btn1" class="btn1 btn" data-url="{% url 'service_page' %}">Try it now</button>
-            <button type="button" id="btn2" class="btn2 btn" data-url="{% url 'more_info_page' %}">More Info</button>
+            <button type="button" id="btn1" class="btn1 btn">Try it now</button>
+            <button type="button" id="btn2" class="btn2 btn">More Info</button>
+        
         </div>
         </div>
         <div class="team-members">
@@ -23,10 +24,10 @@
     <script>
 
         document.getElementById('btn1').onclick = function() {
-            location.href = this.getAttribute('data-url');
+            location.href = 'http://127.0.0.1:8000/service_page/';
         }
         document.getElementById('btn2').onclick = function() {
-            location.href = this.getAttribute('data-url');
+            location.href = 'http://127.0.0.1:8000/info_page/';
         }
 
     </script>

@@ -31,7 +31,7 @@ def info_page(request):
 
 def building(image):
     logger.info("Building function started")
-    model = YOLO("../core/static/runs/best.pt")
+    model = YOLO("core/static/runs/best.pt") 
     results = model(image)
     detections = results[0].boxes.data.cpu().numpy()
     mask = np.zeros(image.shape[:2], dtype=np.uint8)
@@ -73,7 +73,7 @@ def text(image):
 def sign(image):
 
     logger.info("sign function started")
-    model = YOLO("../core/static/runs/best_sign.pt")
+    model = YOLO("core/static/runs/best_sign.pt") 
     results = model(image)
     detections = results[0].boxes.data.cpu().numpy()
     mask = np.zeros(image.shape[:2], dtype=np.uint8)
